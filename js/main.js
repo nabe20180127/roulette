@@ -2,11 +2,13 @@
 
 class Roulette {
     constructor() {
-        this.ver = 1.04;
+        this.ver = 1.05;
+        this.selectPat = 0;
 
         this.table = document.getElementById('NameTable');
         this.nameFile = document.getElementById("inputNameListFile");
         this.selectedDiv = document.getElementById('selected');
+        this.chkBox = document.getElementById('pattern');
         this.verDiv = document.getElementById("ver");
         this.verDiv.innerText="ver."+this.ver;
 
@@ -103,7 +105,13 @@ class Roulette {
 
     initTable = () => {
         this.strNomalTable()
-        this.table.innerHTML = this.nmlTable;
+        if(this.selectPat==0) {
+            this.table.innerHTML = this.nmlTable;
+        }
+        else {
+            this.strRndTable()
+            this.table.innerHTML = this.rndTable;
+        }
     }
 
     strSeqTable = () => {
@@ -161,8 +169,14 @@ class Roulette {
     }
 
     runRoulette = () => {
-        this.strSeqTable();
-        this.table.innerHTML = this.seqTable;
+        if(this.selectPat==0) {
+            this.strSeqTable();
+            this.table.innerHTML = this.seqTable;
+        }
+        else {
+            this.strRndTable();
+            this.table.innerHTML = this.rndTable;
+        }
     }
 
     runStep = (n) => {
@@ -194,9 +208,14 @@ class Roulette {
     runFlush = n => {
         setTimeout(
             () => { 
-                if(this.isSeqTable) { this.table.innerHTML = this.nmlTable; this.isSeqTable=false;}
-                else                { this.table.innerHTML = this.seqTable; this.isSeqTable=true; }
-
+                if(this.selectPat==0) {
+                    if(this.isSeqTable) { this.table.innerHTML = this.nmlTable; this.isSeqTable=false;}
+                    else                { this.table.innerHTML = this.seqTable; this.isSeqTable=true; }
+                }
+                else {
+                    if(this.isRndTable) { this.table.innerHTML = this.nmlTable; this.isRndTable=false;}
+                    else                { this.table.innerHTML = this.rndTable; this.isRndTable=true; }
+                }
                 if(n>0) this.runFlush(n-1);
             },
             100
@@ -206,12 +225,24 @@ class Roulette {
     onenterframe = () => {
         if(this.input.space) {
             if(this.isStarted==false) {
-                let rnd;
-                do {
-                    rnd = Math.floor(Math.random() * this.nameList.length);
+                console.log(this.chkBox.checked)
+
+                if(this.chkBox.checked){
+                    this.selectPat=1;
+                    this.isRndTable=true;
                 }
-                while(this.skipList[rnd]==true);
-                this.target = rnd;
+                else {
+                    this.selectPat=0;
+                }
+
+                if(this.selectPat==0) {
+                    let rnd;
+                    do {
+                        rnd = Math.floor(Math.random() * this.nameList.length);
+                    }
+                    while(this.skipList[rnd]==true);
+                    this.target = rnd;
+                }
             }
             this.isStarted = true;
             this.count=0;
@@ -219,9 +250,21 @@ class Roulette {
         }
         else {
             if(this.isStarted) {
-                this.count=0;
-                this.runStep(10);
-                this.isStarted = false;
+                if(this.selectPat==0) {
+                    this.count=0;
+                    this.runStep(10);
+                    this.isStarted = false;
+                }
+                else {
+                    this.count++;
+                    if(this.count < 8) {
+                        this.sleep(200*this.count); this.runRoulette();
+                    }
+                    else {
+                        this.runFlush(15);
+                        this.isStarted = false;
+                    }
+                }
              }
         }
     }
