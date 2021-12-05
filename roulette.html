@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ルーレット</title>
+    <style>
+        P { padding: auto;
+            margin: auto;
+        }
+
+        TABLE {
+              width: 600px;
+              border: 2px #ff0000 solid;
+              margin: 20px;
+        }
+
+        TR { text-align: center; 
+             font-size: 15pt;
+             border: 2px #00FF00 solid;
+        }
+
+        TD { text-align: center; 
+             font-size: 15pt;
+             border: 2px #0000FF solid;
+        }
+
+        div#selected {
+             width:600px;
+             text-align: center; 
+             font-size: 30pt;
+        }
+
+        div#ver {
+             font-size: 6pt;
+        }
+    </style>
+</head>
+<body>
+  <script src="js/main.js"></script>
+  <p> <div id="selected"></div></p>
+  <p> <table id="NameTable"></table> <p>
+  <p> <input type="file" id="inputNameListFile" accept=".txt"/> </p>
+  <p> <div id="ver"></div></p>
+  <p>
+     <div>使い方</div>
+     <div>1.名簿ファイルを読み込む</div>
+     <div>2.スペースを押し続ける</div>
+     <div>3.頃合いを見計らってスペースを離す</div>
+     <div>4.だれかが選ばれる</div>
+  </p>
+
+</body>
+</html>
+
