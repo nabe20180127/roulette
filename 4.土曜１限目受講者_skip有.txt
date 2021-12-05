@@ -1,0 +1,3 @@
+﻿A-1:skip,B-1,C-1:skip,D-1,E-1,
+A-2,B-2:skip,C-2,D-2,E-2:skip
+
