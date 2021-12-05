@@ -66,7 +66,7 @@ class Roulette {
 
         if(file.type.indexOf("text") == 0){
             file_reader.onload = e => {
-                const regex =  /\r\n/g
+                const regex =  /[\r\n]/g
                 this.rawTxt = file_reader.result;
                 this.rawTxt = this.rawTxt.replaceAll(regex, '')
                 const list = this.rawTxt.split(',');
