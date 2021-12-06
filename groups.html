@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>グループ分け</title>
+    <style>
+        P { padding: auto;
+            margin: auto;
+        }
+
+        TABLE {
+              border: 2px #ff0000 solid;
+              margin: 20px;
+        }
+
+        TR { text-align: center; 
+             font-size: 15pt;
+             border: 2px #00FF00 solid;
+        }
+
+        TD,TH { text-align: center; 
+             font-size: 15pt;
+             border: 2px #0000FF solid;
+        }
+
+        div#usage {
+             font-size: 8pt;
+             background-color:#CCCCCC;
+        }
+
+        div#ver {
+             font-size: 6pt;
+             margin-bottom:10px;
+        }
+    </style>
+</head>
+<body>
+  <script src="js/groups.js"></script>
+  <div id="usage">使い方</div>
+  <div id="usage">1.名簿ファイルを読み込む</div>
+  <div id="usage">2.グループの人数を選択</div>
+  <div id="usage">3.グループ生成ボタンを押す</div>
+  <div id="usage">4.グループ記号が表示される</div>
+  <div id="ver"></div>
+  <p> メンバーリスト<input type="file" id="inputNameListFile" accept=".txt"/> </p>
+  <p> <label for="grpNum">１グループあたりの人数</label>
+      <select name="num" id="grpNum">
+        <option value=0>選択してください</option>
+        <option value=3>3人</option>
+        <option value=4>4人</option>
+        <option value=5>5人</option>
+      </select>
+  </p>
+  <p> <input type="button" id="makeGroup" value="グループ生成"/> </p>
+  <p id="msg"></p>
+  <table id="groupTable"></table>
+
+</body>
+</html>
+
