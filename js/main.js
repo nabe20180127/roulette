@@ -99,7 +99,9 @@ class Roulette {
 
     _mainLoop = () => {
         this.onenterframe();
-        this.selectedDiv.innerText = this.selectedName+"さん";
+        const regex =  /<BR>/g;
+        const name = this.selectedName.replaceAll(regex, '');
+        this.selectedDiv.innerText = name+"さん";
         requestAnimationFrame( this._mainLoop );
     }
 
