@@ -2,7 +2,8 @@
 
 class Groups {
     constructor() {
-        this.ver = 0.03;
+        this.ver = 0.04;
+        this.cb = navigator.clipboard;
 
         this.table = document.getElementById('groupTable');
         this.nameFile = document.getElementById("inputNameListFile");
@@ -148,7 +149,11 @@ class Groups {
             h += "</TR>\n"; 
         }
         this.nmlTable = h;
-        console.log(this.sTable);
+        this.cb.writeText("<TABLE>"+h+"</TABLE>");
+        const str = this.msgP.innerText;
+        this.msgP.innerText = str + "テーブルをクリップボードにコピーしました。";
+
+        //console.log(this.sTable);
     }
 
     onClick = e => {
