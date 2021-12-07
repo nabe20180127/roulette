@@ -2,7 +2,7 @@
 
 class Groups {
     constructor() {
-        this.ver = 0.01;
+        this.ver = 0.02;
 
         this.table = document.getElementById('groupTable');
         this.nameFile = document.getElementById("inputNameListFile");
@@ -19,11 +19,15 @@ class Groups {
 
 
         this.nameList=[];
+        this.gmod = 0;
         this.nmlTable= "";
         this.gnum = 0;     //1グループを構成する人数
         this.grpDivNum;    //できるグループ総数
+
+
         this.grpValid = false;
         this.grpAll = [];
+        this.grpAllForce = [];
         this.sTable = [];
 
         this.initTable();
@@ -102,6 +106,8 @@ class Groups {
         this.gnum = 0;     //1グループを構成する人数
         this.grpDivNum;    //できるグループ総数
         this.grpAll = [];
+        this.grpAllForce = [];
+        this.sTable = [];
 
         this.strNomalTable()
         this.table.innerHTML = this.nmlTable;
@@ -128,7 +134,8 @@ class Groups {
                        str = String.fromCharCode('A'.charCodeAt(0)+this.sTable[j][this.grpAll[j][i]-1]);
                     }
                     else {
-                       str = "重複";
+                       str = String.fromCharCode('A'.charCodeAt(0)+this.sTable[j][this.grpAllForce[j][i]-1]);
+                       str += " *";
                     }
                 }
                 else {
@@ -153,6 +160,7 @@ class Groups {
             }
             else {
                 const g_mod =  this.nameList.length % this.gnum;
+                this.gmod = g_mod;
                 const grpDivNum = (this.nameList.length-g_mod)/this.gnum;
 //                const grpPatNum = 1+~~((grpDivNum-1)/(this.gnum-1));
                 let t  = this.nameList.length+"人を"+this.gnum+"人のグループに分割します。";
@@ -170,9 +178,18 @@ class Groups {
                 this.grpAll = [];
                 this.grpValid = false;
                 this.sTable = new Array();
+
+                let gDivNum;
+                if(this.gmod!=0) {
+                    gDivNum = this.grpDivNum+1;
+                }
+                else {
+                    gDivNum = this.grpDivNum;
+                }
+
                 for(let p=0;p<this.grpPatNum;p++){
                     var sTable = new Array();
-                    for(let i=0;i<grpDivNum;i++) {
+                    for(let i=0;i<gDivNum;i++) {
                         sTable.push(i);
                     }
                     sTable = this.shuffle(sTable);
@@ -188,7 +205,7 @@ class Groups {
             }
         }
         else {
-            console.log("???");
+            ;//console.log("???");
         }
 
     }
@@ -232,7 +249,7 @@ class Groups {
                    else if(m==1){
                        for (let i=0;i<memNum;i++) {
                            if((member[i]==false) && (mtx[i][gmember[0]]==false)) {
-                               //グループで二人目で、未割り当てで、過去に同じグループになっていない。
+                               //グループで2人目で、未割り当てで、過去に同じグループになっていない。
                                mtx[i][gmember[0]]=true;
                                member[i]=g+1;
                                gmember.push(i); //i番目の人が(g+1)グループに所属していることを示す
@@ -244,7 +261,7 @@ class Groups {
                        for (let i=0;i<memNum;i++) {
                            if((member[i]==false) && (mtx[i][gmember[0]]==false)
                                                  && (mtx[i][gmember[1]]==false)) {
-                               //グループで３人目で、未割り当てで、過去に同じグループになっていない。
+                               //グループで3人目で、未割り当てで、過去に同じグループになっていない。
                                mtx[i][gmember[0]]=true;
                                mtx[i][gmember[1]]=true;
                                member[i]=g+1;
@@ -258,7 +275,7 @@ class Groups {
                            if((member[i]==false) && (mtx[i][gmember[0]]==false)
                                                  && (mtx[i][gmember[1]]==false)
                                                  && (mtx[i][gmember[2]]==false)) {
-                               //グループで３人目で、未割り当てで、過去に同じグループになっていない。
+                               //グループで4人目で、未割り当てで、過去に同じグループになっていない。
                                mtx[i][gmember[0]]=true;
                                mtx[i][gmember[1]]=true;
                                mtx[i][gmember[2]]=true;
@@ -274,7 +291,7 @@ class Groups {
                                                  && (mtx[i][gmember[1]]==false)
                                                  && (mtx[i][gmember[2]]==false)
                                                  && (mtx[i][gmember[3]]==false)) {
-                               //グループで３人目で、未割り当てで、過去に同じグループになっていない。
+                               //グループで5人目で、未割り当てで、過去に同じグループになっていない。
                                mtx[i][gmember[0]]=true;
                                mtx[i][gmember[1]]=true;
                                mtx[i][gmember[2]]=true;
@@ -285,15 +302,62 @@ class Groups {
                            }
                        }
                    }
-                   console.log("gmember",gmember);
+                   //console.log("gmember",gmember);
                    //m=1:つまり、グループで２人目([0,1])
                    //m=2:3人目                   ([0,2][1,2])
                    //m=3:4人目                   ([0,3][1,3][2,3])
                    //m=4:5人目                   ([0,4][1,4][2,4][3,4]) の組み合わせを使用済みにする必要あり。
                 }
             }
-            console.log(member);
+
+            //console.log("member", member);
+
+            //割り当てられなかった人を強制的にグループに割り当てる
+            let memforce = [...member];
+
+            //console.log("memforce",memforce);
+            let cntAry = new Array();
+            let gDivNum;
+            if(this.gmod!=0) {
+                gDivNum = this.grpDivNum+1;
+            }
+            else {
+                gDivNum = this.grpDivNum;
+            }
+
+            for(let m=0;m<gDivNum;m++) {
+                cntAry.push(0);
+            }
+
+            for(let i=0;i<memNum;i++) {
+                if(member[i]!=false) {
+                    cntAry[member[i]-1]++;
+                }
+            }
+            //console.log("cntAry", cntAry);
+
+            for(let i=0;i<memNum;i++) {
+                let g;
+                if(memforce[i]!=false){
+                    continue;
+                }
+                else {
+                    for (g=0;g<gDivNum;g++){
+                        if(cntAry[g]==this.gnum){
+                            continue;
+                        }
+                        else {
+                            break; 
+                        }
+                    }
+                    cntAry[g]++;
+                    memforce[i] = g+1;
+                }
+            }
+            //console.log("memforce",memforce);
+
             this.grpAll.push([...member]);
+            this.grpAllForce.push([...memforce]);
             this.grpValid = true;
         }
     }
