@@ -2,7 +2,7 @@
 
 class Groups {
     constructor() {
-        this.ver = 0.02;
+        this.ver = 0.03;
 
         this.table = document.getElementById('groupTable');
         this.nameFile = document.getElementById("inputNameListFile");
@@ -70,6 +70,7 @@ class Groups {
         else if(e.target==this.gNumSel) {
             this.gnum = this.gNumSel.value;
             this.msgP.innerText = "グループあたり"+this.gnum+"人です。"
+            this.initTable();
         }
     }
 
@@ -103,6 +104,7 @@ class Groups {
     }
 
     initTable = () => {
+        this.grpValid = false;
         this.gnum = 0;     //1グループを構成する人数
         this.grpDivNum;    //できるグループ総数
         this.grpAll = [];
