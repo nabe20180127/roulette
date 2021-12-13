@@ -4,18 +4,15 @@
     <meta charset="UTF-8">
     <title>ルーレット</title>
     <style>
-        P { padding: auto;
-            margin: auto;
-        }
 
         TABLE {
-              width: 600px;
               border: 2px #ff0000 solid;
-              margin: 20px;
+              padding: auto;
+              margin: auto;
         }
 
         TR { text-align: center; 
-             font-size: 15pt;
+             font-size: 10pt;
              border: 2px #00FF00 solid;
         }
 
@@ -24,8 +21,17 @@
              border: 2px #0000FF solid;
         }
 
+        TD.gnum { text-align: center; 
+             font-size: 10pt;
+             border: 2px #FF00FF solid;
+        }
+
+
+        div {
+             margin:5px;
+        }
+
         div#selected {
-             width:600px;
              text-align: center; 
              font-size: 30pt;
         }
@@ -33,22 +39,65 @@
         div#ver {
              font-size: 6pt;
         }
+
+        div.all {
+             display: table; 
+        }
+
+        div.tbl {
+//             background-color: #ff00ff;
+             width:65%;
+             display: table-cell;
+        }
+
+        div.doc {
+//             background-color: #00ff00;
+             width:35%;
+             display: table-cell;
+        }
+
     </style>
 </head>
 <body>
   <script src="js/main.js"></script>
-  <p> <div id="selected"></div></p>
-  <p> <table id="NameTable"></table> <p>
-  <p> <input type="file" id="inputNameListFile" accept=".txt"/> </p>
-  <p> <label><input type="checkbox" id="pattern">ランダムパターン</label>
-  <p> <div id="ver"></div></p>
-  <p>
-     <div>使い方</div>
-     <div>1.名簿ファイルを読み込む</div>
-     <div>2.スペースを押し続ける</div>
-     <div>3.頃合いを見計らってスペースを離す</div>
-     <div>4.だれかが選ばれる</div>
-  </p>
+
+  <div class="all">
+  <div class="tbl">
+    <div id="selected"></div>
+    <table id="NameTable"></table>
+  </div>
+
+  <div class="doc">
+    <div>
+      <input type="file" id="inputNameListFile" accept=".txt"/>
+    </div>
+    <div>
+      <label><input type="checkbox" id="pattern">ランダムパターン</label>
+      <label><input type="checkbox" id="chkShuffle">１回ずつパターン</label>
+    </div>
+    <div>
+      <label for="grpNum">１グループあたりの人数</label>
+      <select name="num" id="grpNum" disabled>
+        <option value=0>選択してください</option>
+        <option value=1>1人</option>
+        <option value=2>2人</option>
+        <option value=3>3人</option>
+        <option value=4>4人</option>
+        <option value=5>5人</option>
+      </select>
+    </div>
+    <div>
+      <div id="ver"></div>
+      <div>
+         <div>使い方</div>
+         <div>1.名簿ファイルを読み込む</div>
+         <div>2.スペースを押し続ける</div>
+         <div>3.頃合いを見計らってスペースを離す</div>
+         <div>4.だれかが選ばれる or グループや順番が確定する</div>
+      </div>
+    </div>
+  </div>
+  </div>
 
 </body>
 </html>
