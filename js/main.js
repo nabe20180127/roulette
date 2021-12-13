@@ -2,7 +2,7 @@
 
 class Roulette {
     constructor() {
-        this.ver = 1.06;
+        this.ver = 1.07;
         this.selectPat = 0;
 
         this.table = document.getElementById('NameTable');
@@ -226,9 +226,28 @@ class Roulette {
         let name;
         let h = "";
         const num = this.gnum;
-        for (let i=0;i<this.nameList.length;i++) {
-            // name = this.nameList[this.sTable[i]].replaceAll(regex, '');
-            // name = this.sTable[i];
+        const all = this.nameList.length;
+        const mod = all % num;
+
+        if(((num==3) &&               (all < 4)) ||
+           ((num==4) && (mod == 1) && (all < 9)) ||
+           ((num==4) && (mod == 2) && (all < 6)) ||
+           ((num==5) && (mod == 1) && (all <16)) ||
+           ((num==5) && (mod == 2) && (all <12)) ||
+           ((num==5) && (mod == 3) && (all < 8)) ) {
+            this.shuffleTable = "この人数でのグループ分けは非対応です。";
+            return;
+        }
+
+        let firstGrp;
+        if( mod != 0) {
+            firstGrp = all - (num-1) * (num-mod);
+        }
+        else {
+            firstGrp = all;
+        }
+
+        for (let i=0;i<firstGrp;i++) {
             name = this.nameList[this.sTable[i]];
 
             if(i % num == 0) {
@@ -242,6 +261,21 @@ class Roulette {
             h += "</TD>";
             if(i+1 % num == 0) h += "</TR>\n"; 
         }
+
+        for (let i=firstGrp;i<all;i++) {
+            name = this.nameList[this.sTable[i]];
+            if((i-firstGrp) % (num-1) == 0) {
+                h += "<TR>";
+                h += "<TD class='gnum' width='100px' bgcolor='#CCCCFF'>第";
+                h += (firstGrp/num) + (~~((i-firstGrp)/(num-1))+1) ;
+                h += "グループ</TD>";
+            }
+            h += "<TD width='150px'>";
+            h += name;
+            h += "</TD>";
+            if((i-firstGrp+1) % (num-1) == 0) h += "</TR>\n";
+        }
+
         this.shuffleTable = h;
     }
 
