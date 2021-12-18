@@ -1,104 +1,116 @@
 ﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>ルーレット</title>
-    <style>
+  <meta charset="UTF-8">
+  <title>ルーレット</title>
+  <style>
 
-        TABLE {
-              border: 2px #ff0000 solid;
-              padding: auto;
-              margin: auto;
-        }
+      TABLE {
+        border: 2px #ff0000 solid;
+        padding: auto;
+        margin: auto;
+      }
 
-        TR { text-align: center; 
-             font-size: 10pt;
-             border: 2px #00FF00 solid;
-        }
+      TR {
+        text-align: center; 
+        font-size: 10pt;
+        border: 2px #00FF00 solid;
+      }
 
-        TD { text-align: center; 
-             font-size: 15pt;
-             border: 2px #0000FF solid;
-        }
+      TD {
+        text-align: center; 
+        font-size: 15pt;
+        border: 2px #0000FF solid;
+      }
 
-        TD.gnum { text-align: center; 
-             font-size: 10pt;
-             border: 2px #FF00FF solid;
-        }
+      TD.gnum {
+        text-align: center; 
+        font-size: 10pt;
+        border: 2px #FF00FF solid;
+      }
 
+      div {
+        margin: 5px;
+      }
 
-        div {
-             margin:5px;
-        }
+      div#selected {
+        text-align: center; 
+        font-size: 30pt;
+      }
 
-        div#selected {
-             text-align: center; 
-             font-size: 30pt;
-        }
+      div#ver {
+        font-size: 6pt;
+      }
 
-        div#ver {
-             font-size: 6pt;
-        }
+      /* ↓ここのdiv.allなどは、.allだけでもいい */
+      div.all {
+        display: table; 
+      }
 
-        div.all {
-             display: table; 
-        }
+      div.tbl {
+        /* background-color: #ff00ff; */
+        width: 65%;
+        display: table-cell;
+      }
 
-        div.tbl {
-//             background-color: #ff00ff;
-             width:65%;
-             display: table-cell;
-        }
+      div.doc {
+        /* background-color: #00ff00; */
+        width: 35%;
+        display: table-cell;
+      }
 
-        div.doc {
-//             background-color: #00ff00;
-             width:35%;
-             display: table-cell;
-        }
-
-    </style>
+  </style>
 </head>
 <body>
   <script src="js/main.js"></script>
 
   <div class="all">
-  <div class="tbl">
-    <div id="selected"></div>
-    <table id="NameTable"></table>
-  </div>
+    
+    <div class="tbl">
+      <div id="selected"></div>
+      <table id="NameTable"></table>
+    </div>
 
-  <div class="doc">
-    <div>
-      <input type="file" id="inputNameListFile" accept=".txt"/>
-    </div>
-    <div>
-      <label><input type="checkbox" id="pattern">ランダムパターン</label>
-      <label><input type="checkbox" id="chkShuffle">１回ずつパターン</label>
-    </div>
-    <div>
-      <label for="grpNum">１グループあたりの人数</label>
-      <select name="num" id="grpNum" disabled>
-        <option value=0>選択してください</option>
-        <option value=1>1人</option>
-        <option value=2>2人</option>
-        <option value=3>3人</option>
-        <option value=4>4人</option>
-        <option value=5>5人</option>
-      </select>
-    </div>
-    <div>
-      <div id="ver"></div>
+    <div class="doc">
+      
       <div>
-         <div>使い方</div>
-         <div>1.名簿ファイルを読み込む</div>
-         <div>2.スペースを押し続ける</div>
-         <div>3.頃合いを見計らってスペースを離す</div>
-         <div>4.だれかが選ばれる or グループや順番が確定する</div>
+        <input type="file" id="inputNameListFile" accept=".txt"/>
       </div>
-    </div>
-  </div>
-  </div>
+      
+      <div>
+        <label><input type="checkbox" id="pattern">ランダムパターン</label>
+        <label><input type="checkbox" id="chkShuffle">グループ化パターン</label>
+      </div>
+      
+      <div>
+        <label for="grpNum">１グループあたりの人数</label>
+        <select name="num" id="grpNum" disabled>
+          <option value=0>選択してください</option>
+          <option value=1>1人</option>
+          <option value=2>2人</option>
+          <option value=3>3人</option>
+          <option value=4>4人</option>
+          <option value=5>5人</option>
+        </select>
+      </div>
 
+      <div>
+        <div id="ver"></div>
+        <div>
+          <div>使い方</div>
+          <div>1.名簿ファイルを読み込む</div>
+          <div>2.ファイルを読み込んでから、</div>
+          <div>3.必要に応じて、チェックボックスでオプションを選ぶ</div>
+          <div>4.スペースを押し続ける</div>
+          <div>5.頃合いを見計らってスペースを離す</div>
+          <div>6.だれかが選ばれる or グループや順番が確定する</div>
+        </div>
+      </div>
+    
+    </div> <!--  end of <div class="doc"> -->
+
+  </div> <!-- <div class="all"> -->
+  
 </body>
 </html>
 
