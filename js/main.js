@@ -1,26 +1,38 @@
 ﻿'use strict'
 
 class Roulette {
+
+    /*
+    山本メモ：
+    constructor()の中のinitTableの中を見ている途中。
+    */
+
     constructor() {
-        this.ver = 1.07;
+
+        this.ver = "1.08 Preview"; // 山本が勝手にアップデート
         this.selectPat = 0;
 
         this.table = document.getElementById('NameTable');
         this.nameFile = document.getElementById("inputNameListFile");
         this.selectedDiv = document.getElementById('selected');
+
+        // ↓「ランダムパターン」のチェックボックス
         this.chkBox = document.getElementById('pattern');
+
+        // ↓「グループ化パターン」のチェックボックス
         this.chkBoxShuffle = document.getElementById('chkShuffle');
+
         this.verDiv = document.getElementById("ver");
         this.verDiv.innerText="ver."+this.ver;
         this.gNumSel = document.getElementById("grpNum");
 
-        this.rawTxt = "？？？";
-        this.nameList = ["？？？"];
+        this.rawTxt = "［まだ設定されていません］";
+        this.nameList = ["［まだ設定されていません］"];
         this.skipList = [false];
-        this.selectedName = this.nameList[0];
+        this.selectedName = this.nameList[ 0];
 
         this.input = {}; //keyの状態
-	this._keys = {}; //key の割り当て辞書
+    	this._keys = {}; //keyの割り当て辞書
 
         this.target = 0;
         this.curSelected = 0;
@@ -30,11 +42,12 @@ class Roulette {
         this.isSeqTable = true;
         this.sTable = [];
         this.rndTable;
-        this.nmlTable;
+        this.nmlTable; // HTMLで表現した名簿のテーブル、TRとTDつき。
         this.seqTable;
         this.shuffleTable;
         this.initTable();
         this.gnum = 4;
+
     }
 
     start = () => {
@@ -79,15 +92,14 @@ class Roulette {
             console.log("chkBox");
         }
 
-        if(this.chkBox.checked){
-            this.selectPat=1;
+        if ( this.chkBox.checked){
+            this.selectPat = 1; // ランダムパターン
+        } else if ( this.chkBoxShuffle.checked){
+            this.selectPat = 2; // グループ化パターン
+        } else {
+            this.selectPat = 0; // デフォルト
         }
-        else if(this.chkBoxShuffle.checked){
-            this.selectPat=2;
-        }
-        else {
-            this.selectPat=0;
-        }
+
     }
 
 
@@ -137,32 +149,58 @@ class Roulette {
     }
 
     initTable = () => {
-        const regex =  /<BR>/g;
 
+        // 選ばれた名前に<BR>が入っていたら、それは削除して最上部に表示する。
+        const regex =  "/<BR>/g";
+        // ↑ここはダブルクォーテーションなしの /<BR>/g でもいける。
+        // これを正規表現リテラルと呼ぶのである。。
+
+        // とにかくテーブルをHTMLでつくっておく。
+        // それはthis.nmlTableに入っている。
         this.strNomalTable()
-        if(this.selectPat==0) {
-            this.table.innerHTML = this.nmlTable;
-            const name = this.selectedName.replaceAll(regex, '');
-            this.selectedDiv.innerText = name+"さん";
 
-        }
-        else if(this.selectPat==2) {
+        if ( this.selectPat == 0) { // デフォルト
+
+            // テーブルを表示する。
             this.table.innerHTML = this.nmlTable;
+            
+            // 選ばれた名前を表示する。
+            const name = this.selectedName.replaceAll( regex, '');
+            this.selectedDiv.innerText = name;
+            // ↑この時点では未設定なので、「さん」をつけない。
+
+        } else if ( this.selectPat == 2) { // グループ化パターン
+
+            // テーブルを表示する。
+            this.table.innerHTML = this.nmlTable;
+
+            // 選ばれた名前を表示する。
+            this.selectedDiv.innerText = "未抽選";
+            
+            // ↓sTableにnameListをコピーするのはvar sTable = this.nameList.slice();でもOK
+            // ↓var sTable = [];でもOK
             var sTable = new Array();
-            for(let i=0;i<this.nameList.length;i++) {
-                sTable.push(i);
+            for ( let i = 0; i < this.nameList.length; i++) {
+                sTable.push( i);
             }
-            this.sTable = this.shuffle(sTable);
+            
+            // 名前の順番をシャッフル
+            this.sTable = this.shuffle( sTable);
+
+            // ****************** ここまで見た
+
             this.strShuffleTable();
             this.table.innerHTML = this.shuffleTable;
-            this.selectedDiv.innerText = "未抽選";
+            
+        } else { // ランダムパターン
 
-        }
-        else {
             this.strRndTable()
             this.table.innerHTML = this.rndTable;
             const name = this.selectedName.replaceAll(regex, '');
             this.selectedDiv.innerText = name+"さん";
+            // ↑なぜか「ランダムパターン」にチェックを入れた状態でファイルを読むと、人名が出てしまう。
+            // ********** TODO **********
+
         }
     }
 
@@ -208,16 +246,19 @@ class Roulette {
         this.selectedName = this.nameList[rnd];
     }
 
+    // ファイルから読んだnameListをHTMLの表にする。
     strNomalTable = () => {
+
         let h = "";
-        for (let i=0;i<this.nameList.length;i++) {
-            if(i % 5 == 0) h += "<TR>";
+        for ( let i = 0; i < this.nameList.length; i++) {
+            if ( i % 5 == 0) h += "<TR>";
             h += "<TD>";
-            h += this.nameList[i];
+            h += this.nameList[ i];
             h += "</TD>";
-            if(i+1 % 5 == 0) h += "</TR>\n"; 
+            if ( (i+1) % 5 == 0) h += "</TR>\n"; 
         }
         this.nmlTable = h;
+
     }
 
     strShuffleTable = () => {
@@ -403,13 +444,25 @@ class Roulette {
              }
         }
     }
-
+    
+    /* 
+    　以下のシャッフルのアルゴリズム：
+    　Fisher–Yates shuffle の改良版である Durstenfeld のアルゴリズムで、
+    　Knuth が "Algorithm P (Shuffling)" と称したもの、らしい。
+    */
+    // *********** TODO **********
+    // この引数の受け取り方は、残余引数構文、らしい。
+    // 配列をコピーで受け取っているようだ。
     shuffle = ([...array]) => {
-        for (let i=array.length-1;i>=0;i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+
+        for ( let i = array.length - 1; i >= 0; i--) {
+            const j = Math.floor( Math.random() * (i + 1));
+            // ↓分割代入を使っている。
             [array[i], array[j]] = [array[j], array[i]];
         }
+        
         return array;
+
     }
 
     sleep = waitMsec => {
@@ -419,7 +472,10 @@ class Roulette {
 
 }
 
-addEventListener( 'load', () => {
-    const r = new Roulette();
-    r.start()
-} );
+addEventListener(
+    "load",
+    () => {
+        const r = new Roulette();
+        r.start()
+    }
+);
