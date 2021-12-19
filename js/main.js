@@ -24,6 +24,8 @@ class Roulette {
 
         this.verDiv = document.getElementById("ver");
         this.verDiv.innerText="ver."+this.ver;
+
+        // ↓「1グループあたりの人数」のプルダウン
         this.gNumSel = document.getElementById("grpNum");
 
         this.rawTxt = "［まだ設定されていません］";
@@ -77,17 +79,17 @@ class Roulette {
 
     onChange = e => {
 
-        if(e.target==this.nameFile) {
+        if ( e.target == this.nameFile) {
             this.fileLoad();
         }
 
-        if(e.target==this.gNumSel) {
+        if ( e.target == this.gNumSel) {
             this.gnum = this.gNumSel.value;
             this.initTable();
             console.log("numSel");
         }
 
-        if(e.target==this.chkBoxShuffle) {
+        if ( e.target == this.chkBoxShuffle) {
             this.gNumSel.disabled = !this.chkBoxShuffle.checked;
             console.log("chkBox");
         }
@@ -150,13 +152,13 @@ class Roulette {
 
     initTable = () => {
 
-        // 選ばれた名前に<BR>が入っていたら、それは削除して最上部に表示する。
+        // 選ばれた名前に<BR>が入っていたら、最上部に名前を表示する際、その<BR>は削除する。
+        // そのための正規表現を持っておく。
         const regex =  "/<BR>/g";
-        // ↑ここはダブルクォーテーションなしの /<BR>/g でもいける。
-        // これを正規表現リテラルと呼ぶのである。。
+        // ↑これはダブルクォーテーションなしの /<BR>/g でもいい。
+        // この /<BR>/g のようなものを正規表現リテラルと呼ぶのである。。
 
-        // とにかくテーブルをHTMLでつくっておく。
-        // それはthis.nmlTableに入っている。
+        // とにかくテーブルをHTMLでつくってthis.nmlTableに入れておく。
         this.strNomalTable()
 
         if ( this.selectPat == 0) { // デフォルト
@@ -186,11 +188,12 @@ class Roulette {
             
             // 名前の順番をシャッフル
             this.sTable = this.shuffle( sTable);
+            // シャッフル後の順番で表を作成
+            this.strShuffleTable();
+            // 表を表示する
+            this.table.innerHTML = this.shuffleTable;
 
             // ****************** ここまで見た
-
-            this.strShuffleTable();
-            this.table.innerHTML = this.shuffleTable;
             
         } else { // ランダムパターン
 
@@ -261,51 +264,70 @@ class Roulette {
 
     }
 
+    // グループ化パターンの表をHTMLでつくってthis.shuffleTableに保存。
     strShuffleTable = () => {
 
         const regex =  /<BR>/g;
         let name;
         let h = "";
         const num = this.gnum;
+
         const all = this.nameList.length;
         const mod = all % num;
 
-        if(((num==3) &&               (all < 4)) ||
-           ((num==4) && (mod == 1) && (all < 9)) ||
-           ((num==4) && (mod == 2) && (all < 6)) ||
-           ((num==5) && (mod == 1) && (all <16)) ||
-           ((num==5) && (mod == 2) && (all <12)) ||
-           ((num==5) && (mod == 3) && (all < 8)) ) {
+        // 以下の一般ルールは？
+        // 1グループが必ず(num-1)人以上になるべし、という条件？
+        // だとすると、
+        // intq=floor(all/num)として、num - mod - 1 < intq のとき、
+        // 他グループから1人ずつもってくれば不足グループをnum-1人に補うのに十分、かも。
+        // ********** TODO **********
+        if ( ( (num == 3) &&               (all <  4)) ||  // i.e. num: 3, all: 1 or 2
+             ( (num == 4) && (mod == 1) && (all <  9)) ||  // i.e. num: 4, all: 1 or 5
+             ( (num == 4) && (mod == 2) && (all <  6)) ||  // i.e. num: 4, all: 2
+             ( (num == 5) && (mod == 1) && (all < 16)) ||  // i.e. num: 5, all: 1 or 6 or 11
+             ( (num == 5) && (mod == 2) && (all < 12)) ||  // i.e. num: 5, all: 2 or 7
+             ( (num == 5) && (mod == 3) && (all <  8)) ) { // i.e. num: 5, all: 3 
             this.shuffleTable = "この人数でのグループ分けは非対応です。";
             return;
         }
 
+        // 方針：firstGrp人については、num人のグループに分け、
+        // 残りは、(num-1)人のグループに分ける。
         let firstGrp;
-        if( mod != 0) {
+        if ( mod != 0) {
             firstGrp = all - (num-1) * (num-mod);
-        }
-        else {
+        } else {
             firstGrp = all;
         }
 
-        for (let i=0;i<firstGrp;i++) {
-            name = this.nameList[this.sTable[i]];
+        for ( let i = 0; i < firstGrp; i++) {
 
-            if(i % num == 0) {
+            name = this.nameList[ this.sTable[ i]];
+
+            if ( i % num == 0){
                 h += "<TR>";
                 h += "<TD class='gnum' width='100px' bgcolor='#CCCCFF'>第";
-                h += (~~(i/num)+1) ;
+
+                h += (~~(i/num)+1);
+                // ↑この ~~ は、Math.floor()と同義？
+                // ********* TODO **********
+
                 h += "グループ</TD>";
             }
+
             h += "<TD width='150px'>";
             h += name;
             h += "</TD>";
-            if(i+1 % num == 0) h += "</TR>\n"; 
+            
+            if ( (i+1) % num == 0){
+                h += "</TR>\n";
+            } 
+
         }
 
-        for (let i=firstGrp;i<all;i++) {
-            name = this.nameList[this.sTable[i]];
-            if((i-firstGrp) % (num-1) == 0) {
+        for (let i = firstGrp; i < all; i++){
+            name = this.nameList[ this.sTable[ i]];
+            if ( (i-firstGrp) % (num-1) == 0){
                 h += "<TR>";
                 h += "<TD class='gnum' width='100px' bgcolor='#CCCCFF'>第";
                 h += (firstGrp/num) + (~~((i-firstGrp)/(num-1))+1) ;
@@ -314,10 +336,13 @@ class Roulette {
             h += "<TD width='150px'>";
             h += name;
             h += "</TD>";
-            if((i-firstGrp+1) % (num-1) == 0) h += "</TR>\n";
+            if ( (i-firstGrp+1) % (num-1) == 0){
+                h += "</TR>\n";
+            }
         }
 
         this.shuffleTable = h;
+
     }
 
     runRoulette = () => {
