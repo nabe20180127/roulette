@@ -4,7 +4,11 @@ class Roulette {
 
     /*
     山本メモ：
-    constructor()の中のinitTableの中を見ている途中。
+    constructor()を見た。
+    start()の中の
+    　_mainLoop()の中の
+    　　onenterframe()の中の
+    　　　runFlish()を見ようとしている。
     */
 
     constructor() {
@@ -30,22 +34,25 @@ class Roulette {
 
         this.rawTxt = "［まだ設定されていません］";
         this.nameList = ["［まだ設定されていません］"];
-        this.skipList = [false];
+        this.skipList = [ false];
         this.selectedName = this.nameList[ 0];
 
+        // 下のinputと_keysは空のオブジェクトらしい。
+        // 角括弧かドットでプロパティにアクセスできるらしい。
+        // プロパティとは、フィールドの意味らしい。
         this.input = {}; //keyの状態
     	this._keys = {}; //keyの割り当て辞書
 
         this.target = 0;
-        this.curSelected = 0;
+        this.curSelected = 0; // 現在のカーソル位置
         this.count = 0;
         this.isStarted = false;
-        this.isRndTable = false;
+        this.isRndTable = false; // ランダムパターンだとtrueにされるが、タイムアウト時の処理に使われるらしい。
         this.isSeqTable = true;
         this.sTable = [];
         this.rndTable;
         this.nmlTable; // HTMLで表現した名簿のテーブル、TRとTDつき。
-        this.seqTable;
+        this.seqTable; // 同、現在のカーソル位置を進めて、そこに色を塗った版。
         this.shuffleTable;
         this.initTable();
         this.gnum = 4;
@@ -53,14 +60,14 @@ class Roulette {
     }
 
     start = () => {
-        this.keybind('space', ' ');
+        this.keybind( 'space', ' ');
         this._mainLoop();
         this._setEventListener();
     }
 
-    keybind = ( name, key ) => {
-        this._keys[name] = key;
-        this.input[name] = false;
+    keybind = ( name, key) => {
+        this._keys[ name] = key;
+        this.input[ name] = false;
     }
 
     _keyEvent = e => {
@@ -103,7 +110,6 @@ class Roulette {
         }
 
     }
-
 
     fileLoad = () => {
         const file_list = this.nameFile.files;
@@ -193,60 +199,82 @@ class Roulette {
             // 表を表示する
             this.table.innerHTML = this.shuffleTable;
 
-            // ****************** ここまで見た
-            
         } else { // ランダムパターン
 
+            // ランダムパターン用の表をつくる。
             this.strRndTable()
+            // 表を表示する
             this.table.innerHTML = this.rndTable;
-            const name = this.selectedName.replaceAll(regex, '');
+
+            // 現在選ばれている名前を最上部に表示する。
+            // この際に名前から<BR>を除外する。
+            const name = this.selectedName.replaceAll( regex, '');
             this.selectedDiv.innerText = name+"さん";
             // ↑なぜか「ランダムパターン」にチェックを入れた状態でファイルを読むと、人名が出てしまう。
             // ********** TODO **********
-
+            
         }
     }
 
     strSeqTable = () => {
+
         this.curSelected++;
-        if(this.curSelected >= this.nameList.length) this.curSelected=0; 
+        if ( this.curSelected >= this.nameList.length){
+            this.curSelected = 0;
+        }
 
         let h = "";
-        for (let i=0;i<this.nameList.length;i++) {
-            if(i % 5 == 0) h += "<TR>";
+        for ( let i = 0; i < this.nameList.length; i++){
 
-            if(this.curSelected==i) h += "<TD bgcolor='#FF0000'>";
-//            else if(this.target==i) h += "<TD bgcolor='#00FF00'>";
-            else       h += "<TD>";
+            if ( i % 5 == 0){
+                h += "<TR>";
+            }
 
-            h += this.nameList[i];
+            if ( this.curSelected == i){
+                h += "<TD bgcolor='#FF0000'>";
+            } else {
+                h += "<TD>";
+            }
+
+            h += this.nameList[ i];
             h += "</TD>";
-            if(i+1 % 5 == 0) h += "</TR>\n"; 
+
+            if ( (i+1) % 5 == 0){
+                h += "</TR>\n"; 
+            }
+
         }
         this.seqTable = h;
-        this.selectedName = this.nameList[this.curSelected];
+        this.selectedName = this.nameList[ this.curSelected];
+
     }
 
+    // ランダムパターンの際の表をつくる。
+    // つまり、ランダムに選ばれた人の名前に色を塗る。
+    // 色が塗られている人の名前がthis.selectedNameに入る。
     strRndTable = () => {
+
         let rnd;
         do {
-            rnd = Math.floor(Math.random() * this.nameList.length);
-        }
-        while(this.skipList[rnd]==true);
+            rnd = Math.floor( Math.random() * this.nameList.length);
+        } while( this.skipList[ rnd] == true);
 
         let h = "";
-        for (let i=0;i<this.nameList.length;i++) {
-            if(i % 5 == 0) h += "<TR>";
-
-            if(rnd==i) h += "<TD bgcolor='#FF0000'>";
-            else       h += "<TD>";
-
-            h += this.nameList[i];
+        for ( let i = 0; i < this.nameList.length; i++){
+            if ( i % 5 == 0) h += "<TR>";
+            if ( rnd == i){
+                h += "<TD bgcolor='#FF0000'>";
+            } else {
+                h += "<TD>";
+            }
+            h += this.nameList[ i];
             h += "</TD>";
-            if(i+1 % 5 == 0) h += "</TR>\n"; 
+            if ( (i+1) % 5 == 0){
+                h += "</TR>\n";
+            }
         }
         this.rndTable = h;
-        this.selectedName = this.nameList[rnd];
+        this.selectedName = this.nameList[ rnd];
     }
 
     // ファイルから読んだnameListをHTMLの表にする。
@@ -346,30 +374,39 @@ class Roulette {
     }
 
     runRoulette = () => {
-        if(this.selectPat==0) {
-            this.strSeqTable();
+
+        if ( this.selectPat == 0){ // デフォルトのパターン
+
+            this.strSeqTable(); 
             this.table.innerHTML = this.seqTable;
-            const regex =  /<BR>/g;
-            const name = this.selectedName.replaceAll(regex, '');
+            const regex = /<BR>/g;
+            const name = this.selectedName.replaceAll( regex, '');
             this.selectedDiv.innerText = name+"さん";
-        }
-        else if(this.selectPat==2) {
+
+        } else if ( this.selectPat == 2){ // グループ化パターン
+
+            // sTableに0からの連番を入れる。
             var sTable = new Array();
-            for(let i=0;i<this.nameList.length;i++) {
-                sTable.push(i);
+            for ( let i = 0; i < this.nameList.length; i++){
+                sTable.push( i);
             }
-            this.sTable = this.shuffle(sTable);
+
+            this.sTable = this.shuffle( sTable); 
+
             this.strShuffleTable();
             this.table.innerHTML = this.shuffleTable;
-            this.selectedDiv.innerText = "抽選中";
-        }
-        else {
+            this.selectedDiv.innerHTML = "抽選中";
+
+        } else { // ランダムパターン
+
             this.strRndTable();
             this.table.innerHTML = this.rndTable;
             const regex =  /<BR>/g;
-            const name = this.selectedName.replaceAll(regex, '');
+            const name = this.selectedName.replaceAll( regex, '');
             this.selectedDiv.innerText = name+"さん";
+
         }
+
     }
 
     runStep = (n) => {
@@ -426,48 +463,60 @@ class Roulette {
     }
 
     onenterframe = () => {
-        if(this.input.space) {
-            if(this.isStarted==false) {
 
-                if(this.chkBox.checked){
-                    this.selectPat=1;
-                    this.isRndTable=true;
-                }
-                else if(this.chkBoxShuffle.checked){
-                    this.selectPat=2;
-                }
-                else {
-                    this.selectPat=0;
+        if ( this.input.space){ // スペースが押されている場合？
+
+            if ( this.isStarted == false){
+
+                if ( this.chkBox.checked){ // ランダムパターン
+                    this.selectPat = 1;
+                    this.isRndTable = true;
+                } else if ( this.chkBoxShuffle.checked){ // グループ化パターン
+                    this.selectPat = 2;
+                } else { // デフォルトのパターン
+                    this.selectPat = 0;
                 }
 
-                if(this.selectPat==0) {
+                // デフォルトのパターンの場合、this.targetがここで決まる。
+                if ( this.selectPat == 0){
                     let rnd;
                     do {
-                        rnd = Math.floor(Math.random() * this.nameList.length);
-                    }
-                    while(this.skipList[rnd]==true);
+                        rnd = Math.floor( Math.random() * this.nameList.length);
+                    } while( this.skipList[ rnd] == true);
                     this.target = rnd;
                 }
+
             }
             this.isStarted = true;
-            this.count=0;
+            this.count = 0;
             this.runRoulette();
-        }
-        else {
-            if(this.isStarted) {
+
+        } else {
+
+            if ( this.isStarted){ // スペースが離された？
+                
+                // countはスペースが押されたときに0になった。
                 this.count++;
                 let n = 15;
-                if(this.selectPat==2) n=0;
-
-                if(this.count < 8) {
-                    this.sleep(400*this.count); this.runRoulette();
+                if ( this.selectPat == 2){ // グループ化パターンのとき
+                    n = 0; // 焦らさない。
                 }
-                else {
-                    this.runFlush(n);
+
+                if ( this.count < 8){ // 焦らしながらルーレットを進める
+                    this.sleep( 400*this.count);
+                    this.runRoulette();
+                } else { // ルーレットがストップ！
+
+                    // ********** いまここ
+
+                    this.runFlush( n);
                     this.isStarted = false;
                 }
+
              }
+
         }
+
     }
     
     /* 
